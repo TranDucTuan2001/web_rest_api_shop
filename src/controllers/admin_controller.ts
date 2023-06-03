@@ -29,7 +29,7 @@ class AdminController {
 
         user.token = token;
         await user.save();
-        res.status(200).json({ message: "Đăng nhập thành công" });
+        res.status(200).json({token});
         return;
       }
 
