@@ -9,6 +9,7 @@ router.post("/logout", authenController.logout);
 router.post("/createProduct", adminController.createProduct);
 router.delete("/removeProduct/:id", adminController.removeProduct);
 router.put("/updateProduct/:id", adminController.updateProduct);
+router.put("/tesst/:id", adminController.updateProduct);
 
 
 export default router;
