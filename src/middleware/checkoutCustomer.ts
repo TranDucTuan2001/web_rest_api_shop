@@ -11,7 +11,7 @@ export async function checkCustomerMiddleware(
   let tokenstring: any = req.headers.authorization;
   try {
     let verifyObj: any = await jwt.verify(tokenstring, "authen1");
-    console.log("chau", verifyObj);
+    // console.log("chau", verifyObj);
     if (!verifyObj) {
       return res.sendStatus(401);
     }
