@@ -29,7 +29,7 @@ class AdminController {
 
         user.token = token;
         await user.save();
-        res.status(200).json({token});
+        res.status(200).json({ token });
         return;
       }
 
@@ -41,47 +41,61 @@ class AdminController {
     }
   }
 
-  // them san pham
+  // Thêm sản phẩm
   async createProduct(req: Request, res: Response) {
     try {
       const { product_name, price, description, quantity, size, img1, img2 } = req.body;
-      const newProduct = new Product({ product_name: product_name, price: price, description: description, quantity: quantity, size: size, img1: img1, img2: img2 });
-      newProduct.save();
-      res.status(200).json({ newProduct });
+      const newProduct = new Product({ product_name, price, description, quantity, size, img1, img2 });
+      await newProduct.save();
+
+      const products = await Product.find();
+      res.status(200).json([{ message: "thêm sản phẩm thành công" },products]);
     } catch (error) {
-      res.status(500).json({ message: "Err" });
+      res.status(500).json({ message: "Lỗi nội bộ máy chủ" });
     }
   }
 
-  // xoa san pham
+  // Xoá sản phẩm
   async removeProduct(req: Request, res: Response) {
     try {
       const idProduct = req.params.id;
-      console.log("d", idProduct);
-      const newProduct = await Product.findByIdAndDelete({ _id: idProduct });
+      const removedProduct = await Product.findByIdAndDelete(idProduct);
 
-      res.status(200).json(newProduct);
+      if (!removedProduct) {
+        return res.status(404).json({ message: "Sản phẩm không tồn tại" });
+      }
+
+      const products = await Product.find();
+      res.status(200).json([{ message: "Xoá sản phẩm thành công" },products]);
     } catch (error) {
-      res.status(500).json({ message: "Err" });
+      res.status(500).json({ message: "Lỗi nội bộ máy chủ" });
     }
   }
 
-// cap nhat san pham
+  // Cập nhật sản phẩm
   async updateProduct(req: Request, res: Response) {
     try {
-      let idProduct = req.params.id;
-      let product_name = req.body.product_name;
-      let price = req.body.price;
-      let description = req.body.description;
-      let quantity = req.body.quantity;
-      let size = req.body.size;
-      let img1 = req.body.img1;
-      let img2 = req.body.img2;
+      const idProduct = req.params.id;
+      const { product_name, price, description, quantity, size, img1, img2 } = req.body;
 
-      const newProduct = await Product.findByIdAndUpdate(idProduct, { product_name: product_name, price: price, description: description, quantity: quantity, size: size, img1: img1, img2: img2 });
-      res.status(200).json(newProduct);
+      const updatedProduct = await Product.findByIdAndUpdate(idProduct, {
+        product_name,
+        price,
+        description,
+        quantity,
+        size,
+        img1,
+        img2
+      }, { new: true });
+
+      if (!updatedProduct) {
+        return res.status(404).json({ message: "Sản phẩm không tồn tại" });
+      }
+
+      const products = await Product.find();
+      res.status(200).json([{ message: "Cập nhật sản phẩm  thành công" },products]);
     } catch (error) {
-      res.status(500).json({ message: "Err" });
+      res.status(500).json({ message: "Lỗi nội bộ máy chủ" });
     }
   }
 }
